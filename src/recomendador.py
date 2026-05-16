@@ -1,4 +1,7 @@
+import os
+import joblib
 import pandas as pd
+
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from deep_translator import GoogleTranslator
@@ -13,7 +16,7 @@ class RecomendadorLibros:
         # Leer dataset
         self.df = pd.read_csv("data/libros.csv")
 
-        # Rellenar valores vacíos
+        # Rellenar vacíos
         self.df = self.df.fillna("")
 
         print("Cargando modelo de IA...")
@@ -21,20 +24,41 @@ class RecomendadorLibros:
         # Modelo NLP
         self.modelo = SentenceTransformer('all-MiniLM-L6-v2')
 
+        # Ruta embeddings
+        ruta_embeddings = "models/embeddings.pkl"
+
         print("Preparando información de libros...")
 
-        # Combinar información SIN modificar el CSV
+        # Combinar texto SIN modificar CSV
         self.textos_libros = (
             self.df["title"].astype(str) + " " +
             self.df["categories"].astype(str) + " " +
             self.df["description"].astype(str)
         )
 
-        # Crear embeddings
-        self.embeddings = self.modelo.encode(
-            self.textos_libros.tolist(),
-            show_progress_bar=True
-        )
+        # Verificar si ya existen embeddings
+        if os.path.exists(ruta_embeddings):
+
+            print("Cargando embeddings guardados...")
+
+            self.embeddings = joblib.load(ruta_embeddings)
+
+        else:
+
+            print("Creando embeddings por primera vez...")
+
+            self.embeddings = self.modelo.encode(
+                self.textos_libros.tolist(),
+                show_progress_bar=True
+            )
+
+            # Guardar embeddings
+            joblib.dump(
+                self.embeddings,
+                ruta_embeddings
+            )
+
+            print("Embeddings guardados.")
 
         print("Sistema listo.\n")
 
@@ -56,32 +80,38 @@ class RecomendadorLibros:
 
         print(f"\nConsulta traducida: {consulta_ingles}")
 
-        # Embedding de consulta
+        # Embedding consulta
         embedding_consulta = self.modelo.encode([consulta_ingles])
 
-        # Similaridad
+        # Similaridades
         similitudes = cosine_similarity(
             embedding_consulta,
             self.embeddings
         )[0]
 
-        # Agregar similitud al dataframe temporalmente
-        self.df["similitud"] = similitudes
+        # Copia temporal
+        resultados_df = self.df.copy()
 
-        # Detectar preferencias de longitud
+        # Agregar similitud
+        resultados_df["similitud"] = similitudes
+
         consulta_lower = consulta_usuario.lower()
 
+        # Detectar longitud
         if "corto" in consulta_lower:
-            resultados = self.df[self.df["num_pages"] < 300]
+
+            resultados_df = resultados_df[
+                resultados_df["num_pages"] < 300
+            ]
 
         elif "largo" in consulta_lower:
-            resultados = self.df[self.df["num_pages"] > 500]
 
-        else:
-            resultados = self.df
+            resultados_df = resultados_df[
+                resultados_df["num_pages"] > 500
+            ]
 
-        # Top 5 mejores
-        top_libros = resultados.sort_values(
+        # Ordenar resultados
+        top_libros = resultados_df.sort_values(
             by="similitud",
             ascending=False
         ).head(5)
