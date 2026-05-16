@@ -1,6 +1,7 @@
 import os
 import joblib
 import pandas as pd
+import re
 
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -18,6 +19,15 @@ class RecomendadorLibros:
 
         # Rellenar vacíos
         self.df = self.df.fillna("")
+        
+        # Convertir páginas a número
+        self.df["num_pages"] = pd.to_numeric(
+            self.df["num_pages"],
+            errors="coerce"
+        )
+
+        # Reemplazar NaN por 0
+        self.df["num_pages"] = self.df["num_pages"].fillna(0)
 
         print("Cargando modelo de IA...")
 
@@ -97,7 +107,10 @@ class RecomendadorLibros:
 
         consulta_lower = consulta_usuario.lower()
 
-        # Detectar longitud
+        # ==================================================
+        # DETECTAR LIBRO CORTO O LARGO
+        # ==================================================
+
         if "corto" in consulta_lower:
 
             resultados_df = resultados_df[
@@ -110,7 +123,33 @@ class RecomendadorLibros:
                 resultados_df["num_pages"] > 500
             ]
 
-        # Ordenar resultados
+        # ==================================================
+        # DETECTAR NÚMERO DE PÁGINAS
+        # ==================================================
+
+        numeros = re.findall(r'\d+', consulta_lower)
+
+        if numeros:
+
+            paginas_deseadas = int(numeros[0])
+
+            print(f"Páginas detectadas: {paginas_deseadas}")
+
+            margen = 50
+
+            resultados_df = resultados_df[
+                (
+                    resultados_df["num_pages"] >= paginas_deseadas - margen
+                ) &
+                (
+                    resultados_df["num_pages"] <= paginas_deseadas + margen
+                )
+            ]
+
+        # ==================================================
+        # ORDENAR RESULTADOS
+        # ==================================================
+
         top_libros = resultados_df.sort_values(
             by="similitud",
             ascending=False
