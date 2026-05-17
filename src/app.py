@@ -67,13 +67,40 @@ if st.button("Buscar"):
 
             with col1:
 
-                # Imagen libro
-                if "thumbnail" in libro:
+                if (
+                        "thumbnail" in libro
+                        and libro["thumbnail"]
+                        and str(libro["thumbnail"]) != "nan"
+                    ):
 
-                    st.image(
-                        libro["thumbnail"],
-                        width=150
-                    )
+                        try:
+
+                            st.image(
+                                libro["thumbnail"],
+                                width=150
+                            )
+
+                        except:
+
+                            st.write("Imagen no disponible")
+
+                else:
+                    
+                    st.markdown(
+                    """
+                    <div style="
+                        height: 220px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border: 1px solid gray;
+                        border-radius: 10px;
+                    ">
+                        Imagen no disponible
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
             with col2:
 
