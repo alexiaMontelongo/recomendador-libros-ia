@@ -15,6 +15,28 @@ st.set_page_config(
 )
 
 # =====================================
+# ESTADOS
+# =====================================
+
+if "busqueda" not in st.session_state:
+
+    st.session_state.busqueda = ""
+
+if "resultados" not in st.session_state:
+
+    st.session_state.resultados = None
+
+# =====================================
+# FUNCIÓN LIMPIAR
+# =====================================
+
+def limpiar_busqueda():
+
+    del st.session_state["busqueda"]
+
+    st.rerun()
+
+# =====================================
 # TÍTULO
 # =====================================
 
@@ -36,43 +58,39 @@ def cargar_recomendador():
 recomendador = cargar_recomendador()
 
 # =====================================
-# INPUT USUARIO
+# FORMULARIO BÚSQUEDA
 # =====================================
 
-# Inicializar estado
-if "busqueda" not in st.session_state:
-
-    st.session_state.busqueda = ""
-
-# Función limpiar
-def limpiar_busqueda():
-
-    st.session_state.busqueda = ""
-
-# Layout
 col1, col2 = st.columns([8, 1])
 
 with col1:
 
-    consulta = st.text_input(
-        "¿Qué libro buscas?",
-        key="busqueda"
-    )
+    with st.form("form_busqueda"):
+
+        consulta = st.text_input(
+            "¿Qué libro buscas?",
+            key="busqueda"
+        )
+
+        buscar = st.form_submit_button(
+            "Buscar"
+        )
 
 with col2:
 
     st.write("")
 
-    st.button(
-        "❌",
-        on_click=limpiar_busqueda
-    )
+    st.write("")
+
+    if st.button("❌"):
+
+        limpiar_busqueda()
 
 # =====================================
-# BOTÓN
+# EJECUTAR BÚSQUEDA
 # =====================================
 
-if st.button("Buscar"):
+if buscar:
 
     if consulta.strip() != "":
 
@@ -80,38 +98,66 @@ if st.button("Buscar"):
             "Buscando libros..."
         ):
 
-            resultados = recomendador.recomendar(
-                consulta
+            st.session_state.resultados = (
+                recomendador.recomendar(
+                    consulta
+                )
             )
 
-        st.subheader("Resultados")
+# =====================================
+# MOSTRAR RESULTADOS
+# =====================================
 
-        for _, libro in resultados.iterrows():
+if st.session_state.resultados is not None:
 
-            col1, col2 = st.columns([1, 3])
+    st.subheader("Resultados")
 
-            with col1:
+    for _, libro in (
+        st.session_state.resultados.iterrows()
+    ):
 
-                if (
-                        "thumbnail" in libro
-                        and libro["thumbnail"]
-                        and str(libro["thumbnail"]) != "nan"
-                    ):
+        col1, col2 = st.columns([1, 3])
 
-                        try:
+        # =====================================
+        # IMAGEN
+        # =====================================
 
-                            st.image(
-                                libro["thumbnail"],
-                                width=150
-                            )
+        with col1:
 
-                        except:
+            if (
+                "thumbnail" in libro
+                and libro["thumbnail"]
+                and str(libro["thumbnail"]) != "nan"
+            ):
 
-                            st.write("Imagen no disponible")
+                try:
 
-                else:
-                    
+                    st.image(
+                        libro["thumbnail"],
+                        width=150
+                    )
+
+                except:
+
                     st.markdown(
+                        """
+                        <div style="
+                            height: 220px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            border: 1px solid gray;
+                            border-radius: 10px;
+                        ">
+                            Imagen no disponible
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+            else:
+
+                st.markdown(
                     """
                     <div style="
                         height: 220px;
@@ -127,30 +173,34 @@ if st.button("Buscar"):
                     unsafe_allow_html=True
                 )
 
-            with col2:
+        # =====================================
+        # INFORMACIÓN LIBRO
+        # =====================================
 
-                st.markdown(
-                    f"## {libro['title']}"
-                )
+        with col2:
 
-                st.write(
-                    f"✍️ Autor: "
-                    f"{libro['authors']}"
-                )
+            st.markdown(
+                f"## {libro['title']}"
+            )
 
-                st.write(
-                    f"📚 Categoría: "
-                    f"{libro['categories']}"
-                )
+            st.write(
+                f"✍️ Autor: "
+                f"{libro['authors']}"
+            )
 
-                st.write(
-                    f"📖 Páginas: "
-                    f"{libro['num_pages']}"
-                )
+            st.write(
+                f"📚 Categoría: "
+                f"{libro['categories']}"
+            )
 
-                st.write(
-                    f"⭐ Rating: "
-                    f"{libro['average_rating']}"
-                )
+            st.write(
+                f"📖 Páginas: "
+                f"{libro['num_pages']}"
+            )
 
-                st.divider()
+            st.write(
+                f"⭐ Rating: "
+                f"{libro['average_rating']}"
+            )
+
+            st.divider()
