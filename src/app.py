@@ -39,9 +39,34 @@ recomendador = cargar_recomendador()
 # INPUT USUARIO
 # =====================================
 
-consulta = st.text_input(
-    "¿Qué libro buscas?"
-)
+# Inicializar estado
+if "busqueda" not in st.session_state:
+
+    st.session_state.busqueda = ""
+
+# Función limpiar
+def limpiar_busqueda():
+
+    st.session_state.busqueda = ""
+
+# Layout
+col1, col2 = st.columns([8, 1])
+
+with col1:
+
+    consulta = st.text_input(
+        "¿Qué libro buscas?",
+        key="busqueda"
+    )
+
+with col2:
+
+    st.write("")
+
+    st.button(
+        "❌",
+        on_click=limpiar_busqueda
+    )
 
 # =====================================
 # BOTÓN
