@@ -28,6 +28,19 @@ class RecomendadorLibros:
             self.df["num_pages"].fillna(0)
         )
 
+
+        # Convertir rating
+        self.df["average_rating"] = pd.to_numeric(
+            self.df["average_rating"],
+            errors="coerce"
+        ).fillna(0)
+
+        # Convertir cantidad de ratings
+        self.df["ratings_count"] = pd.to_numeric(
+            self.df["ratings_count"],
+            errors="coerce"
+        ).fillna(0)
+
         print("Preparando información de libros...")
 
         # Combinar texto
@@ -67,6 +80,51 @@ class RecomendadorLibros:
         resultados_df = self.df.copy()
 
         resultados_df["similitud"] = similitudes
+
+        # ==========================================
+        # NORMALIZAR RATING
+        # ==========================================
+
+        resultados_df["rating_normalizado"] = (
+            resultados_df["average_rating"] / 5
+        )
+
+        # ==========================================
+        # NORMALIZAR POPULARIDAD
+        # ==========================================
+
+        max_reviews = resultados_df["ratings_count"].max()
+
+        resultados_df["popularidad_normalizada"] = (
+            resultados_df["ratings_count"] / max_reviews
+        )
+
+        # ==========================================
+        # SCORE FINAL
+        # ==========================================
+
+        resultados_df["score_final"] = (
+            resultados_df["similitud"] * 0.75
+            +
+            resultados_df["rating_normalizado"] * 0.15
+            +
+            resultados_df["popularidad_normalizada"] * 0.10
+        )
+
+
+        # ==========================================
+        # FILTRO CALIDAD
+        # ==========================================
+
+        resultados_df = resultados_df[
+            (
+                resultados_df["average_rating"] >= 4.0
+            )
+            &
+            (
+                resultados_df["ratings_count"] >= 1000
+            )
+        ]
 
         consulta_lower = consulta_usuario.lower()
 
@@ -123,7 +181,7 @@ class RecomendadorLibros:
         # ==========================================
 
         top_libros = resultados_df.sort_values(
-            by="similitud",
+            by="score_final",
             ascending=False
         ).head(5)
 
