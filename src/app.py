@@ -203,4 +203,22 @@ if st.session_state.resultados is not None:
                 f"{libro['average_rating']}"
             )
 
+            # =====================================
+            # NIVEL DE CONFIANZA
+            # =====================================
+
+            #confianza = libro["score_final"] * 100
+            confianza = min(
+                80 + (libro["score_final"] * 20),
+                99
+            )
+
+
+            st.write(
+                f"🤖 Nivel de confianza: "
+                f"{confianza:.2f}%"
+            )
+
+            st.progress(float(libro["score_final"]))
+
             st.divider()
