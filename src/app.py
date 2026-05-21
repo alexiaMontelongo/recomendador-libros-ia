@@ -214,11 +214,11 @@ if st.session_state.resultados is not None:
             )
 
 
-            st.write(
-                f"🤖 Nivel de confianza: "
-                f"{confianza:.2f}%"
-            )
+            # st.write(
+             #   f"🤖 Nivel de confianza: "
+             #   f"{confianza:.2f}%"
+            #) 
 
-            st.progress(float(libro["score_final"]))
+            #st.progress(float(libro["score_final"]))
 
             st.divider()
