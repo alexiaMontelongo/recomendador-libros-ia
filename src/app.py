@@ -114,15 +114,37 @@ if st.session_state.resultados is not None:
 
     st.subheader("Resultados")
 
-    for _, libro in (
-        st.session_state.resultados.iterrows()
+    for i, (_, libro) in enumerate(
+        st.session_state.resultados.iterrows(),
+        start=1
     ):
 
-        col1, col2 = st.columns([1, 3])
+        col_num, col1, col2 = st.columns([0.4, 1, 3])
 
         # =====================================
         # IMAGEN
         # =====================================
+
+        with col_num:
+
+            st.markdown(
+                f"""
+                <div style="
+                    font-size: 80px;
+                    font-weight: bold;
+                    color: #C0C0C0;
+                    text-align: left;
+                    padding-left: 10px;
+                    margin-top: 40px;
+                    opacity: 0.8;
+                    text-shadow: 0px 0px 10px rgba(255,255,255,0.2);
+                    -webkit-text-stroke: 2px rgba(255,255,255,0.1);
+                ">
+                    {i}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
         with col1:
 
