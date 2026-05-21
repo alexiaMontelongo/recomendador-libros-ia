@@ -410,6 +410,6 @@ if st.session_state.resultados is not None:
 
 
             st.divider()
-            st.divider()
+            
 
             
