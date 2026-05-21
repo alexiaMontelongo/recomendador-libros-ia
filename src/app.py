@@ -1,5 +1,7 @@
 import streamlit as st
 
+from traduccion import Traductor
+
 from recomendador import (
     RecomendadorLibros
 )
@@ -220,5 +222,19 @@ if st.session_state.resultados is not None:
             #) 
 
             #st.progress(float(libro["score_final"]))
+
+
+           # =====================================
+            # DESCRIPCIÓN DESPLEGABLE
+            # =====================================
+
+            with st.expander("📖 Descripción"):
+
+                descripcion_es = Traductor.traducir(
+                    libro["description"]
+                )
+
+                st.write(descripcion_es)
+
 
             st.divider()

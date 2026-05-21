@@ -193,7 +193,8 @@ class RecomendadorLibros:
                 "num_pages",
                 "average_rating",
                 "thumbnail",
-                "score_final"
+                "score_final",
+                "description"
             ]
         ]
     
