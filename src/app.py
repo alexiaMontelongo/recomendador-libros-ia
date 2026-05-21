@@ -404,6 +404,7 @@ if st.session_state.resultados is not None:
                     libro["description"],
                     destino="es"
                 )
+                st.write(descripcion_es)
 
                
         
