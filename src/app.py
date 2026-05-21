@@ -250,13 +250,25 @@ if st.session_state.resultados is not None:
             # DESCRIPCIÓN DESPLEGABLE
             # =====================================
 
-            with st.expander("📖 Descripción"):
+           # with st.expander("📖 Descripción"):
+
+            #    descripcion_es = Traductor.traducir(
+             #       libro["description"],
+              #      destino = "es"
+               # )
+
+                #st.write(descripcion_es)
+
+
+            with st.expander("📖 Ver descripción"):
 
                 descripcion_es = Traductor.traducir(
-                    libro["description"]
+                    libro["description"],
+                    destino="es"
                 )
 
-                st.write(descripcion_es)
+               
+        
 
 
             st.divider()

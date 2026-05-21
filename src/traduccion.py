@@ -1,15 +1,18 @@
+
 from deep_translator import GoogleTranslator
 
 
 class Traductor:
 
     @staticmethod
-    def traducir(texto):
+    def traducir(
+        texto,
+        destino="en"
+    ):
 
         traduccion = GoogleTranslator(
             source='auto',
-            target='en'
+            target=destino
         ).translate(texto)
 
         return traduccion
-    
