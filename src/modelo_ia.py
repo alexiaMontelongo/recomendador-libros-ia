@@ -57,8 +57,3 @@ class ModeloIA:
 
         return similitudes
     
-
-
-
-
-    
