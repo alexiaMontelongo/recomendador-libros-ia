@@ -118,11 +118,11 @@ class RecomendadorLibros:
 
         resultados_df = resultados_df[
             (
-                resultados_df["average_rating"] >= 4.0
+                resultados_df["average_rating"] >= 3.0
             )
             &
             (
-                resultados_df["ratings_count"] >= 1000
+                resultados_df["ratings_count"] >= 100
             )
         ]
 
