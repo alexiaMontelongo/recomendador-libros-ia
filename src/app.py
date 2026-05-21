@@ -42,6 +42,133 @@ def limpiar_busqueda():
 # TÍTULO
 # =====================================
 
+st.markdown(
+    """
+    <style>
+
+    /* Fondo general */
+    .stApp {
+        background: linear-gradient(
+            180deg,
+            #1e3a8a 0%,
+            #020617 100%
+        );
+    }
+
+    /* Card libro */
+    .libro-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+
+        backdrop-filter: blur(10px);
+
+        border-radius: 24px;
+
+        padding: 25px;
+
+        margin-bottom: 30px;
+
+        transition: all 0.3s ease;
+
+        box-shadow:
+        0px 4px 20px rgba(0,0,0,0.25);
+    }
+
+    .libro-card:hover {
+
+        transform: translateY(-5px);
+
+        border: 1px solid rgba(255,255,255,0.15);
+
+        box-shadow:
+        0px 10px 30px rgba(0,0,0,0.4);
+    }
+
+    /* Hover portada */
+[data-testid="stImage"] img {
+
+    border-radius: 16px;
+
+    transition: all 0.3s ease;
+
+    cursor: pointer;
+}
+
+[data-testid="stImage"] img:hover {
+
+    transform: scale(1.06);
+
+    box-shadow:
+    0px 0px 30px rgba(255,255,255,0.18);
+}
+
+/* Fondo general */
+
+/* INPUT */
+div[data-baseweb="input"] {
+
+    background: rgba(30,58,138,0.45) !important;
+
+    border-radius: 16px !important;
+
+    border: 1px solid rgba(255,255,255,0.12) !important;
+
+    transition: all 0.3s ease !important;
+}
+
+div[data-baseweb="input"]:focus-within {
+
+    border: 1px solid #60a5fa !important;
+
+    box-shadow:
+    0px 0px 20px rgba(96,165,250,0.35) !important;
+}
+
+/* INPUT INTERNO */
+div[data-baseweb="input"] input {
+
+    background: transparent !important;
+
+    color: white !important;
+
+    font-size: 16px !important;
+}
+
+/* BOTONES */
+.stButton > button {
+
+    background: rgba(30,58,138,0.55) !important;
+
+    color: white !important;
+
+    border-radius: 16px !important;
+
+    border: 1px solid rgba(255,255,255,0.12) !important;
+
+    padding: 10px 22px !important;
+
+    font-weight: 600 !important;
+
+    transition: all 0.3s ease !important;
+}
+
+/* HOVER BOTONES */
+.stButton > button:hover {
+
+    background: rgba(59,130,246,0.35) !important;
+
+    border: 1px solid #60a5fa !important;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+    0px 0px 20px rgba(96,165,250,0.25) !important;
+}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.title("📚 Recomendador de Libros con IA")
 
 st.write(
@@ -119,6 +246,7 @@ if st.session_state.resultados is not None:
         start=1
     ):
 
+        
         col_num, col1, col2 = st.columns([0.4, 1, 3])
 
         # =====================================
@@ -156,9 +284,19 @@ if st.session_state.resultados is not None:
 
                 try:
 
+                    st.markdown(
+                        '<div class="portada-hover">',
+                        unsafe_allow_html=True
+                    )
+                    
                     st.image(
                         libro["thumbnail"],
                         width=150
+                    )
+                    
+                    st.markdown(
+                        '</div>',
+                        unsafe_allow_html=True
                     )
 
                 except:
@@ -272,3 +410,6 @@ if st.session_state.resultados is not None:
 
 
             st.divider()
+            st.divider()
+
+            
