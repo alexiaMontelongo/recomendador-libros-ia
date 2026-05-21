@@ -207,7 +207,7 @@ if st.session_state.resultados is not None:
             # NIVEL DE CONFIANZA
             # =====================================
 
-            #confianza = libro["score_final"] * 100
+            confianza = libro["score_final"] * 100
             confianza = min(
                 80 + (libro["score_final"] * 20),
                 99
